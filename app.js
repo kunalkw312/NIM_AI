@@ -161,9 +161,11 @@ function closeSettings() {
 // --- NVIDIA NIM Orchestration ---
 async function fetchModels() {
     try {
-        const response = await fetch('https://integrate.api.nvidia.com/v1/models', {
-            headers: { 'Authorization': `Bearer ${state.apiKey}` }
-        });
+        const response = await fetch('/api/nvidia/models', {
+    headers: {
+        'Authorization': `Bearer ${currentApiKey}`
+    }
+});
         
         if (!response.ok) throw new Error("Failed to fetch models");
         
@@ -302,18 +304,18 @@ async function handleSend() {
         renderMessage('assistant', '<div class="animate-pulse flex space-x-2"><div class="w-2 h-2 bg-gray-400 rounded-full"></div><div class="w-2 h-2 bg-gray-400 rounded-full"></div><div class="w-2 h-2 bg-gray-400 rounded-full"></div></div>', loadingId);
 
         // Standard OpenAI-compatible API POST
-        const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${state.apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: state.selectedModel,
-                messages: state.messages,
-                max_tokens: 1024
-            })
-        });
+        const response = await fetch('/api/nvidia/chat/completions', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentApiKey}`
+    },
+    body: JSON.stringify({
+        model: modelToUse,
+        messages: currentMessages,
+        max_tokens: 1024
+    })
+});
 
         const loadingElement = document.getElementById(loadingId);
         if (loadingElement) loadingElement.remove();
